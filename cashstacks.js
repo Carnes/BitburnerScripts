@@ -7,8 +7,8 @@ export async function main(ns) {
 	var maxServers = 100;
 	var maxSpend = 24000000
 
-     ns.disableLog("getServerMoneyAvailable");
-     ns.disableLog("asleep");
+	ns.disableLog("getServerMoneyAvailable");
+	ns.disableLog("asleep");
 
 	while(true)
 	{
@@ -50,11 +50,19 @@ export async function main(ns) {
 		return obj;
 	}
 
-	function canLevelUp(index)
+	function shouldBuyLevelUpgrade(index)
 	{
 		var stats = ns.hacknet.getNodeStats(index);
 		var canLevelUp = stats.level < (ns.hacknet.numNodes() *10)+10;
 		return canLevelUp;
+	}
+
+	function shouldBuyCoreUpgrade(index)
+	{
+		var stats = ns.hacknet.getNodeStats(index);
+		if (stats.ram > stats.cores * 8 || stats.ram == 64 /*max*/)
+			return true;
+		return false;
 	}
 
 	function getNodeEstimate(index){
@@ -64,17 +72,20 @@ export async function main(ns) {
 				cost: ns.hacknet.getRamUpgradeCost(index, 1),
 				buy: ()=>ns.hacknet.upgradeRam(index, 1),
 			},
-			{
-				cost: ns.hacknet.getCoreUpgradeCost(index, 1),
-				buy: ()=>ns.hacknet.upgradeCore(index, 1),
-			},			
 		];
 
-		if(canLevelUp(index))
+		if(shouldBuyLevelUpgrade(index))
 			nodeEstimates.push({
 				cost: ns.hacknet.getLevelUpgradeCost(index, 1),
 				buy: ()=>ns.hacknet.upgradeLevel(index, 1),
 			});
+
+		if(shouldBuyCoreUpgrade(index))
+			nodeEstimates.push({
+				cost: ns.hacknet.getCoreUpgradeCost(index, 1),
+				buy: ()=>ns.hacknet.upgradeCore(index, 1),
+			});
+
 
 		var cheapest = nodeEstimates.sort(sortByCost);
 		return cheapest[0];
