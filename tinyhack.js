@@ -1,12 +1,14 @@
-export async function main(ns) {
-	var target = ns.getHostname();
+export async function main(ns) {	
+	var target = ns.args[0] || ns.getHostname();
 	var serverMaxMoney = ns.getServerMaxMoney(target);
-	var moneyThresh = serverMaxMoney * 0.75;
+	var moneyThreshOnlyGrow = serverMaxMoney * 0.10;
+	var moneyThreshOnlyHack = serverMaxMoney * 0.80;
 	var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
 	var toastSpamDelayMinutes = 2;
 	var toastDuration = 3000;
 	var lastToastTime = addMinutes(new Date(), toastSpamDelayMinutes *-1);
 	var pendingGains = 0;
+	var randomGrowBonus = 0.2;
 
 	if(serverMaxMoney == 0)
 	{
@@ -21,7 +23,10 @@ export async function main(ns) {
 		if (ns.getServerSecurityLevel(target) > securityThresh) {
 			await ns.weaken(target);
 		}
-		else if (Math.random() > (moneyAvailable / moneyThresh)) {
+		else if (moneyAvailable < moneyThreshOnlyGrow) {
+			await ns.grow(target);
+		}		
+		else if (moneyAvailable < moneyThreshOnlyHack && Math.random() +randomGrowBonus > (moneyAvailable / moneyThreshOnlyHack)) {
 			await ns.grow(target);
 		}
 		else {
