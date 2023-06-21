@@ -5,7 +5,7 @@ export async function main(ns) {
 	}
 
 	var maxServers = 100;
-	var maxSpend = 24000000
+	var maxSpend = 64000000
 
 	ns.disableLog("getServerMoneyAvailable");
 	ns.disableLog("asleep");
@@ -26,7 +26,7 @@ export async function main(ns) {
 				cheapest.buy();
 			}
 		}
-		await ns.asleep(1000);
+		await ns.asleep(250);
 	}
 
 	function getEstimates()
@@ -53,7 +53,7 @@ export async function main(ns) {
 	function shouldBuyLevelUpgrade(index)
 	{
 		var stats = ns.hacknet.getNodeStats(index);
-		var canLevelUp = stats.level < (ns.hacknet.numNodes() *10)+10;
+		var canLevelUp = stats.level < (ns.hacknet.numNodes() *10)+10 || stats.cores >= 12;
 		return canLevelUp;
 	}
 

@@ -1,6 +1,6 @@
 
 export async function main(ns) {
-	const spreadPayload = createPayload("spread.js", ["tinyhack.js","spread.js"]);
+	const spreadPayload = createPayload("spread.js", ["tinyhack.js","spread.js"]);//,"rcom.js"]);
 	const tinyHackPayload = createPayload("tinyhack.js", ["tinyhack.js"], true);
 	const serverBlacklist = ["home"];	
 	const maxSpreadRetry = 3;
@@ -12,7 +12,9 @@ export async function main(ns) {
 		ns.exit();
 	}
 	
-	maxExec(selfServer, "tinyhack.js");
+	var cmd = JSON.stringify({command: "tinyhack", target: selfServer.hostname, killAllFirst: true});
+	vexec("rcom.js", "home",1,cmd);
+	//maxExec(selfServer, "tinyhack.js");
 	ns.exit();
 
 	function p(msg){
@@ -176,10 +178,13 @@ export async function main(ns) {
 		vexec(script, server.hostname, threads);
 	}
 
-	function vexec(script, hostname, threads)
+	function vexec(script, hostname, threads=1, varg=null)
 	{
-		p(hostname+": running " + script + " (x"+threads+")");
-		ns.exec(script, hostname, threads);
+		p(hostname+": running " + script + " (x"+threads+")");//+ (vargs.length>0 ?vargs.toString():""));
+		if(varg!=null)
+			ns.exec(script, hostname, threads, varg);
+		else
+			ns.exec(script, hostname, threads);
 	}
 
 	function deployAndRun(server, payload)
