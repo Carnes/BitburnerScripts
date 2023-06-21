@@ -4,7 +4,7 @@ Thought it would be fun to stash my Bitburner scripts in a real source control.
 
 ## Scripts
 ### cashstacks.js 
-Automatically purchase and upgrade hacknet servers.  Recommend using is asap.  It takes about 4 hours to build into $4.000k/s cashflow.  Kill if you need money to build.
+Automatically purchase and upgrade hacknet servers.  Recommend using is asap.  It takes about 4 hours to build into $4.000k/s cashflow.  It ends at $120.582k/s  Kill if you need money to build.
 There are two variables you can use to steer it:
  - maxServers = 100; // Max nodes to purchase
  - maxSpend = 24000000 // Max allowed cost of upgrade/purchase
